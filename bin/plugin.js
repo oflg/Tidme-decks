@@ -372,7 +372,7 @@ for (const filepath of booksFilepaths) {
         "plugin-type": "plugin",
         source: "https://github.com/oflg/Tidme",
         title: plugintitle,
-        version: "1.0.0",
+        version: "1.0.1",
         type: "application/json",
         text: text,
     };
