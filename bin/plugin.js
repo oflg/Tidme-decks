@@ -101,7 +101,7 @@ for (const filepath of booksFilepaths) {
         order_due: `[sort[due]]`,
         leech_threshold: `8`,
         leech_action: `<$action-sendmessage $message="tm-add-tag" $param="!"/>`,
-        state_learn: `[state[1]] [state[3]] :filter[{!!due}compare:date:lt<now[UTC]YYYY0MM0DD0hh0mm0ss0XXX>]`,
+        state_learn: `[state[1]] [state[3]] :filter[{!!due}compare:date:lt<now [UTC]YYYY0MM0DD0hh0mm0ss0XXX>]`,
         state_due: `[state[2]has[due]] -[!days:due[1]]`,
         state_new: `[!has[state]] [state[0]]`,
         p: `{ "request_retention":0.9, "maximum_interval":36500, "w":[0.4, 0.6, 2.4, 5.8, 4.93, 0.94, 0.86, 0.01, 1.49, 0.14, 0.94, 2.18, 0.05, 0.34, 1.26, 0.29, 2.61] }`
@@ -372,7 +372,7 @@ for (const filepath of booksFilepaths) {
         "plugin-type": "plugin",
         source: "https://github.com/oflg/Tidme",
         title: plugintitle,
-        version: "1.0.2",
+        version: "1.0.3",
         type: "application/json",
         text: text,
     };
