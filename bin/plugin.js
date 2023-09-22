@@ -139,7 +139,7 @@ for (const filepath of booksFilepaths) {
         <span>^^英 {{!!ukphone}}^^</span>
         <span>^^<audio controls autoplay muted  style="width:120px;height:18px;">
                             <source
-                                src={{{ [[https://dict.youdao.com/dictvoice?audio=]addsuffix{!!word}] }}}
+                                src={{{ [[https://dict.youdao.com/dictvoice?type=1&audio=]addsuffix{!!word}] }}}
                                 type="audio/mpeg"
                            >
                         </audio>^^</span>
@@ -372,7 +372,7 @@ for (const filepath of booksFilepaths) {
         "plugin-type": "plugin",
         source: "https://github.com/oflg/Tidme",
         title: plugintitle,
-        version: "1.0.1",
+        version: "1.0.2",
         type: "application/json",
         text: text,
     };
