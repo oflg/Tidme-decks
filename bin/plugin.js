@@ -65,6 +65,9 @@ const bookInfoArry = bookListsJson.data.normalBooksInfo;
 // console.log(bookInfoArry);
 
 for (const filepath of booksFilepaths) {
+
+    let version = "1.0.4";
+
     let bookName = filepath.split("/").slice(-1)[0].replace(".txt", "");
 
     let bookInfo = bookInfoArry.find((bi) => bi.id === bookName);
@@ -76,7 +79,9 @@ for (const filepath of booksFilepaths) {
     let plugintitle = `$:/plugins/tidme/decks/${bookName}`;
     let readme = `${plugintitle}/readme`;
     let deck = `$:/Deck/${bookName}`;
-    let template = `$:/${bookName}/Template`;
+    let front = `$:/plugins/tidme/decks/${bookName}/front`;
+    let back = `$:/plugins/tidme/decks/${bookName}/back`;
+    let style = `$:/plugins/tidme/decks/${bookName}/style.css`;
 
     tiddlers[readme] = {
         title: readme,
@@ -107,113 +112,123 @@ for (const filepath of booksFilepaths) {
         p: `{ "request_retention":0.9, "maximum_interval":36500, "w":[0.4, 0.6, 2.4, 5.8, 4.93, 0.94, 0.86, 0.01, 1.49, 0.14, 0.94, 2.18, 0.05, 0.34, 1.26, 0.29, 2.61] }`
     };
 
-    tiddlers[template] = {
-        title: template,
+    tiddlers[front] = {
+        title: front,
         "code-body": "yes",
-        text: `<style>
-    .wordtip svg {
-        width:1em; height:1em; vertical-align:middle;
-    }
-</style>
-<h1>{{!!word}}</h1><$reveal
-    default={{!!picture}}
-    type="nomatch"
-    text=""
-    animate="yes"
+        text: `
+\\whitespace trim
+
+<div
+    class="${bookName}"
 >
-<br><img src={{!!picture}}style="height:100px;">
-</$reveal>
-<$reveal
-    state=<<folded-state>>
-    type="nomatch"
-    text="hide"
-    animate="yes"
+    <h1>{{!!word}}</h1>
+    <$list
+        filter="[{!!picture}!is[blank]]"
+        variable="ignore"
+    >
+        <br><img src={{!!picture}} style="height:100px;">
+    </$list>
+</div>`,
+    };
+
+    tiddlers[back] = {
+        title: back,
+        "code-body": "yes",
+        text: `
+\\whitespace trim
+
+<div
+    class="${bookName}"
 >
     <div
-        class="tc-tiddler-body"
-   >
-
-        <div
-            style="display:flex;justify-content:space-between;align-items:center;"
-       >
+        class="audio"
+    >
         <span>^^英 {{!!ukphone}}^^</span>
-        <span>^^<audio controls autoplay muted  style="width:120px;height:18px;">
-                            <source
-                                src={{{ [[https://dict.youdao.com/dictvoice?type=1&audio=]addsuffix{!!word}] }}}
-                                type="audio/mpeg"
-                           >
-                        </audio>^^</span>
-        </div>
+        <span>^^<audio controls autoplay muted><source src={{{ [[https://dict.youdao.com/dictvoice?type=1&audio=]addsuffix{!!word}] }}} type="audio/mpeg"/>
+        </audio>^^</span>
+    </div>
 
-        {{!!transCn}}
+    {{!!transCn}}
 
-        <$reveal
-            default={{!!remMethod}}
-            type="nomatch"
-            text=""
-            animate="yes"
-            class="wordtip"
-       >
+    <$list
+        filter="[{!!remMethod}!is[blank]]"
+        variable="ignore"
+    >
+        <div
+            class="tip"
+        >
 
             {{$:/core/images/tip}}{{!!remMethod}}
-        </$reveal>
-        <$reveal
-            default={{!!realExamSentences}}
-            type="nomatch"
-            text=""
-            animate="yes"
-       >
-            <details>
-                <summary>真题</summary>
-                <p>{{!!realExamSentences}}</p>
-            </details>
-        </$reveal>
-        <$reveal
-            default={{!!relWords}}
-            type="nomatch"
-            text=""
-            animate="yes"
-       >
-            <details>
-                <summary>同根</summary>
-                <p>{{!!relWords}}</p>
-            </details>
-        </$reveal>
-        <$reveal
-            default={{!!synos}}
-            type="nomatch"
-            text=""
-            animate="yes"
-       >
-            <details>
-                <summary>同近</summary>
-                <p>{{!!synos}}</p>
-            </details>
-        </$reveal>
-        <$reveal
-            default={{!!phrases}}
-            type="nomatch"
-            text=""
-            animate="yes"
-       >
-            <details>
-                <summary>短语</summary>
-                <p>{{!!phrases}}</p>
-            </details>
-        </$reveal>
-        <$reveal
-            default={{!!sentences}}
-            type="nomatch"
-            text=""
-            animate="yes"
-       >
-            <details>
-            <summary>例句</summary>
-            <p>{{!!sentences}}</p>
-            </details>
-        </$reveal>
-    </div>
-</$reveal>`,
+        </div>
+    </$list>
+    <$list
+        filter="[{!!realExamSentences}!is[blank]]"
+        variable="ignore"
+    >
+        <details>
+            <summary>真题</summary>
+            <p>{{!!realExamSentences}}</p>
+        </details>
+    </$list>
+    <$list
+        filter="[{!!relWords}!is[blank]]"
+        variable="ignore"
+    >
+        <details>
+            <summary>同根</summary>
+            <p>{{!!relWords}}</p>
+        </details>
+    </$list>
+    <$list
+        filter="[{!!synos}!is[blank]]"
+        variable="ignore"
+    >
+        <details>
+            <summary>同近</summary>
+            <p>{{!!synos}}</p>
+        </details>
+    </$list>
+    <$list
+        filter="[{!!phrases}!is[blank]]"
+        variable="ignore"
+    >
+        <details>
+            <summary>短语</summary>
+            <p>{{!!phrases}}</p>
+        </details>
+    </$list>
+    <$list
+        filter="[{!!sentences}!is[blank]]"
+        variable="ignore"
+    >
+        <details>
+        <summary>例句</summary>
+        <p>{{!!sentences}}</p>
+        </details>
+    </$list>
+</div>`,
+    };
+
+    tiddlers[style] = {
+        title: style,
+        tags: "$:/tags/Stylesheet",
+        text: `
+.${bookName} .audio {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.${bookName} .audio audio{
+    width:120px;
+    height:18px;
+}
+
+.${bookName} .tip svg {
+    width:1em;
+    height:1em;
+    vertical-align:middle;
+}`,
     };
 
     let linesData = fs.readFileSync(filepath, "UTF-8");
@@ -246,7 +261,8 @@ for (const filepath of booksFilepaths) {
             title: title,
             word: word,
             transCn: transCn,
-            caption: `{{||${template}}}`,
+            caption: `{{||${front}}}`,
+            text: `{{||${back}}}`
         };
 
         if ("ukphone" in content) {
@@ -372,7 +388,7 @@ for (const filepath of booksFilepaths) {
         "plugin-type": "plugin",
         source: "https://github.com/oflg/Tidme",
         title: plugintitle,
-        version: "1.0.3",
+        version: version,
         type: "application/json",
         text: text,
     };
