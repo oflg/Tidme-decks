@@ -76,7 +76,7 @@ for (const filepath of booksFilepaths) {
 
     let tiddlers = {};
 
-    let plugintitle = `$:/plugins/tidme/decks/${bookName}`;
+    let plugintitle = `$:/plugins/tidme/decks-${bookName}`;
     let readme = `${plugintitle}/readme`;
     let deck = `$:/Deck/${bookName}`;
     let tabbuttonTemplate = `$:/plugins/tidme/decks/${bookName}/tab/buttonTemplate`;
@@ -396,9 +396,9 @@ for (const filepath of booksFilepaths) {
     let plugin = {
         author: "oflg",
         "core-version": ">=5.3.0",
-        description: "牌组",
+        description: bookInfo.title,
         list: "readme",
-        name: bookInfo.title,
+        name: "Tidme Decks",
         "plugin-type": "plugin",
         source: "https://github.com/oflg/Tidme",
         title: plugintitle,
