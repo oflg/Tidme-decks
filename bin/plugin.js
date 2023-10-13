@@ -66,7 +66,7 @@ const bookInfoArry = bookListsJson.data.normalBooksInfo;
 
 for (const filepath of booksFilepaths) {
 
-    let version = "1.0.4";
+    let version = "1.0.5";
 
     let bookName = filepath.split("/").slice(-1)[0].replace(".txt", "");
 
@@ -79,9 +79,17 @@ for (const filepath of booksFilepaths) {
     let plugintitle = `$:/plugins/tidme/decks/${bookName}`;
     let readme = `${plugintitle}/readme`;
     let deck = `$:/Deck/${bookName}`;
+    let tabbuttonTemplate = `$:/plugins/tidme/decks/${bookName}/tab/buttonTemplate`;
+    let tabtemplate = `$:/plugins/tidme/decks/${bookName}/tab/template`;
     let front = `$:/plugins/tidme/decks/${bookName}/front`;
     let back = `$:/plugins/tidme/decks/${bookName}/back`;
     let style = `$:/plugins/tidme/decks/${bookName}/style.css`;
+    let config = "$:/config/EditTemplateFields/Visibility/word_json"
+
+    tiddlers[config] = {
+        title: config,
+        text: "hide"
+    };
 
     tiddlers[readme] = {
         title: readme,
@@ -112,101 +120,232 @@ for (const filepath of booksFilepaths) {
         p: `{ "request_retention":0.9, "maximum_interval":36500, "w":[0.4, 0.6, 2.4, 5.8, 4.93, 0.94, 0.86, 0.01, 1.49, 0.14, 0.94, 2.18, 0.05, 0.34, 1.26, 0.29, 2.61] }`
     };
 
+    tiddlers[tabbuttonTemplate] = {
+        title: tabbuttonTemplate,
+        "code-body": "yes",
+        text: `<$text text={{{ [<word_content>jsonget<currentTab>,[desc]else<currentTab>] }}}/>`,
+    };
+
+    tiddlers[tabtemplate] = {
+        title: tabtemplate,
+        "code-body": "yes",
+        text: `<$let
+    tab_content={{{ [<word_content>jsonextract<currentTab>] }}}
+>
+    <$list
+        filter="[<currentTab>match[sentence]]"
+    >
+        <$let
+            contents={{{ [<tab_content>jsonextract[sentences]] }}}
+        >
+            <$list
+                filter="[<contents>jsonindexes[]]"
+                variable="index"
+            >
+                <$let
+                    content={{{ [<contents>jsonextract<index>] }}}
+                >
+                    <$text
+                        text={{{ [<content>jsonget[sContent]] }}}
+                    />
+                    <br/>
+                    <sup>
+                        <$text
+                            text={{{ [<content>jsonget[sCn]] }}}
+                        />
+                    </sup>
+                    <br/>
+                </$let>
+            </$list>
+        </$let>
+    </$list>
+    <$list
+        filter="[<currentTab>match[syno]]"
+    >
+        <$let
+            contents={{{ [<tab_content>jsonextract[synos]] }}}
+        >
+            <$list
+                filter="[<contents>jsonindexes[]]"
+                variable="index"
+            >
+                <$let
+                    content={{{ [<contents>jsonextract<index>] }}}
+                >
+                    <$text
+                        text={{{ [<content>jsonindexes[hwds]] :map:flat[<content>jsonget[hwds],<currentTiddler>,[w]] +[join[; ]] }}}
+                    />
+                    <br/>
+                    <sup>
+                        <$text
+                            text={{{ [<content>jsonget[pos]] }}}
+                        />. <$text
+                            text={{{ [<content>jsonget[tran]] }}}
+                        />
+                    </sup>
+                    <br/>
+                </$let>
+            </$list>
+        </$let>
+    </$list>
+    <$list
+        filter="[<currentTab>match[phrase]]"
+    >
+        <$let
+            contents={{{ [<tab_content>jsonextract[phrases]] }}}
+        >
+            <$list
+                filter="[<contents>jsonindexes[]]"
+                variable="index"
+            >
+                <$let
+                    content={{{ [<contents>jsonextract<index>] }}}
+                >
+                    <$text
+                        text={{{ [<content>jsonget[pContent]] }}}
+                    />
+                    <br/>
+                    <sup>
+                        <$text
+                            text={{{ [<content>jsonget[pCn]] }}}
+                        />
+                    </sup>
+                    <br/>
+                </$let>
+            </$list>
+        </$let>
+    </$list>
+    <$list
+        filter="[<currentTab>match[relWord]]"
+    >
+        <$let
+            contents={{{ [<tab_content>jsonextract[rels]] }}}
+        >
+            <$list
+                filter="[<contents>jsonindexes[]]"
+                variable="index"
+            >
+                <$let
+                    content={{{ [<contents>jsonextract<index>] }}}
+                >
+                    ''<$text
+                        text={{{ [<content>jsonget[pos]] }}}
+                    />.''<br/>
+                    <$list
+                        filter="[<content>jsonindexes[words]]"
+                        variable="wordindex"
+                    >
+                        <$text
+                            text={{{ [<content>jsonget[words],<wordindex>,[hwd]] }}}
+                        />: <$text
+                                text={{{ [<content>jsonget[words],<wordindex>,[tran]] }}}
+                        />
+                        <br/>
+                    </$list>
+                </$let>
+            </$list>
+        </$let>
+    </$list>
+    <$list
+        filter="[<currentTab>match[realExamSentence]]"
+    >
+        <$let
+            contents={{{ [<tab_content>jsonextract[sentences]] }}}
+        >
+            <$list
+                filter="[<contents>jsonindexes[]]"
+                variable="index"
+            >
+                <$let
+                    content={{{ [<contents>jsonextract<index>] }}}
+                >
+                    <$text
+                        text={{{ [<content>jsonget[sContent]] }}}
+                    />
+                    <br/>
+                    <sup>
+                        <$text
+                            text={{{ [<content>jsonindexes[sourceInfo]sortby[level year paper type]] :map:flat[<content>jsonget[sourceInfo],<currentTiddler>] +[join[ ]] }}}
+                        />
+                    </sup>
+                    <br/>
+                </$let>
+            </$list>
+        </$let>
+    </$list>
+</$let>`,
+    };
+
     tiddlers[front] = {
         title: front,
         "code-body": "yes",
         text: `
-\\whitespace trim
-
-<div
-    class="${bookName}"
+<$let
+    word_content={{{ [{!!word_json}jsonextract[content],[word],[content]] }}}
 >
-    <h1>{{!!word}}</h1>
-    <$list
-        filter="[{!!picture}!is[blank]]"
-        variable="ignore"
+    <div
+        class="${bookName}"
     >
-        <br><img src={{!!picture}} style="height:100px;">
-    </$list>
-</div>`,
+        <h1>{{!!word}}</h1>
+        <$list
+            filter="[<word_content>jsonget[picture]!is[blank]]"
+            variable="picture"
+        >
+            <br><img src=<<picture>> style="height:100px;">
+        </$list>
+    </div>
+</$let>`,
     };
 
     tiddlers[back] = {
         title: back,
         "code-body": "yes",
         text: `
-\\whitespace trim
-
-<div
-    class="${bookName}"
+<$let
+    word_content={{{ [{!!word_json}jsonextract[content],[word],[content]] }}}
 >
     <div
-        class="audio"
-    >
-        <span>^^英 {{!!ukphone}}^^</span>
-        <span>^^<audio controls autoplay muted><source src={{{ [[https://dict.youdao.com/dictvoice?type=1&audio=]addsuffix{!!word}] }}} type="audio/mpeg"/>
-        </audio>^^</span>
-    </div>
-
-    {{!!transCn}}
-
-    <$list
-        filter="[{!!remMethod}!is[blank]]"
-        variable="ignore"
+        class="${bookName}"
     >
         <div
-            class="tip"
+            class="audio"
         >
-
-            {{$:/core/images/tip}}{{!!remMethod}}
+            <span>英 <$text text={{{ [<word_content>jsonget[usphone]] }}}/></span>
+            <span><audio controls autoplay muted><source src={{{ [[https://dict.youdao.com/dictvoice?type=1&audio=]addsuffix{!!word}] }}} type="audio/mpeg"/>
+            </audio></span>
         </div>
-    </$list>
-    <$list
-        filter="[{!!realExamSentences}!is[blank]]"
-        variable="ignore"
-    >
-        <details>
-            <summary>真题</summary>
-            <p>{{!!realExamSentences}}</p>
-        </details>
-    </$list>
-    <$list
-        filter="[{!!relWords}!is[blank]]"
-        variable="ignore"
-    >
-        <details>
-            <summary>同根</summary>
-            <p>{{!!relWords}}</p>
-        </details>
-    </$list>
-    <$list
-        filter="[{!!synos}!is[blank]]"
-        variable="ignore"
-    >
-        <details>
-            <summary>同近</summary>
-            <p>{{!!synos}}</p>
-        </details>
-    </$list>
-    <$list
-        filter="[{!!phrases}!is[blank]]"
-        variable="ignore"
-    >
-        <details>
-            <summary>短语</summary>
-            <p>{{!!phrases}}</p>
-        </details>
-    </$list>
-    <$list
-        filter="[{!!sentences}!is[blank]]"
-        variable="ignore"
-    >
-        <details>
-        <summary>例句</summary>
-        <p>{{!!sentences}}</p>
-        </details>
-    </$list>
-</div>`,
+        <h3>
+            <$text
+                text={{{ [<word_content>jsonget[trans],[0],[pos]] }}}/>. <$text text={{{ [<word_content>jsonget[trans],[0],[tranCn]] }}}
+            />
+        </h3>
+        <div>
+            <$text
+                text={{{ [<word_content>jsonget[trans],[0],[tranOther]] }}}
+            />
+        </div>
+        <$list
+            filter="[<word_content>jsonget[remMethod],[val]!is[blank]]"
+            variable="val"
+        >
+            <div
+                class="tip"
+            >
+                <h4>
+                    {{$:/core/images/tip}} <<val>>
+                </h4>
+            </div>
+        </$list>
+        <$macrocall
+            $name="tabs"
+            tabsList="[<word_content>jsonindexes[]] -trans -phone -usphone -speech -usspeech -ukphone -ukspeech -picture -star -remMethod -exam"
+            default="remMethod"
+            state="$:/temp/tidme/state"
+            template="${tabtemplate}"
+            buttonTemplate="${tabbuttonTemplate}"
+        />
+    </div>
+</$let>`,
     };
 
     tiddlers[style] = {
@@ -225,8 +364,6 @@ for (const filepath of booksFilepaths) {
 }
 
 .${bookName} .tip svg {
-    width:1em;
-    height:1em;
     vertical-align:middle;
 }`,
     };
@@ -238,143 +375,20 @@ for (const filepath of booksFilepaths) {
     for (let li = 0; li < lines.length - 1; li++) {
         let line = lines[li];
 
-        let wordObject = JSON.parse(line).content.word;
+        let wordJSON = JSON.parse(line);
 
-        let word = wordObject.wordHead,
-            title = "$:/" + bookName + "/" + wordObject.wordId.split("_").slice(-1)[0] + "/" + word;
+        // let wordObject = JSON.parse(line).content.word;
 
-        let content = wordObject.content;
-
-        let transCn = "";
-
-        for (let ti = 0; ti < content.trans.length; ti++) {
-            let tran = content.trans[ti];
-
-            if (tran.pos) {
-                transCn += "<b>" + tran.pos + ".</b> ";
-            }
-
-            transCn += tran.tranCn + "<br>";
-        }
+        let word = wordJSON.headWord,
+            title = "$:/" + bookName + "/" + wordJSON.wordRank + "/" + wordJSON.headWord;
 
         tiddlers[title] = {
             title: title,
             word: word,
-            transCn: transCn,
+            word_json: line,
             caption: `{{||${front}}}`,
             text: `{{||${back}}}`
         };
-
-        if ("ukphone" in content) {
-            let ukphone = content.ukphone;
-            tiddlers[title]["ukphone"] = ukphone;
-        }
-
-        if ("usphone" in content) {
-            let usphone = content.usphone;
-            tiddlers[title]["usphone"] = usphone;
-        }
-
-        if ("remMethod" in content) {
-            let remMethod = content.remMethod.val;
-            tiddlers[title]["remMethod"] = remMethod;
-        }
-
-        if ("picture" in content) {
-            let picture = content.picture;
-            tiddlers[title]["picture"] = picture;
-        }
-
-        if ("phrase" in content) {
-            let phrases = "";
-
-            for (let pi = 0; pi < content.phrase.phrases.length; pi++) {
-                let phrase = content.phrase.phrases[pi];
-
-                phrases += phrase.pContent + ":" + phrase.pCn + "<br>";
-            }
-
-            tiddlers[title]["phrases"] = phrases;
-        }
-
-        if ("sentence" in content) {
-            let sentences = "";
-
-            for (let si = 0; si < content.sentence.sentences.length; si++) {
-                let sentence = content.sentence.sentences[si];
-
-                sentences += sentence.sContent + "<br>^^" + sentence.sCn + "^^<br>";
-            }
-            tiddlers[title]["sentences"] = sentences;
-        }
-
-        if ("relWord" in content) {
-            let relWords = "";
-
-            for (let ri = 0; ri < content.relWord.rels.length; ri++) {
-                let relword = content.relWord.rels[ri];
-
-                let words = "";
-
-                if (relword.pos) {
-                    words += "<b>" + relword.pos + ".</b><br>";
-                }
-
-                for (let wj = 0; wj < relword.words.length; wj++) {
-                    let w = relword.words[wj];
-
-                    words += w.hwd + ":" + w.tran + "<br>";
-                }
-
-                relWords += words + "<br>";
-            }
-            tiddlers[title]["relWords"] = relWords;
-        }
-
-        if ("syno" in content) {
-            let synos = "";
-
-            for (let syi = 0; syi < content.syno.synos.length; syi++) {
-                let syno = content.syno.synos[syi];
-
-                let hwds = [];
-
-                for (let hj = 0; hj < syno.hwds.length; hj++) {
-                    let hw = syno.hwds[hj];
-                    hwds.push(hw.w);
-                }
-
-                let hwdsstr = hwds.join(", ");
-
-                if (syno.pos) {
-                    syno.tran = "<b>" + syno.pos + ".</b><br>" + syno.tran;
-                }
-
-                synos += syno.tran + "：" + hwdsstr + "<br>";
-            }
-            tiddlers[title]["synos"] = synos;
-        }
-
-        if ("realExamSentence" in content) {
-            let realExamSentences = "";
-
-            for (let rei = 0; rei < content.realExamSentence.sentences.length; rei++) {
-                let realexamsentence = content.realExamSentence.sentences[rei];
-
-                realExamSentences +=
-                    realexamsentence.sContent +
-                    "<br>^^" +
-                    realexamsentence.sourceInfo.year +
-                    " " +
-                    realexamsentence.sourceInfo.level +
-                    " " +
-                    realexamsentence.sourceInfo.paper +
-                    " " +
-                    realexamsentence.sourceInfo.type +
-                    "^^<br>";
-            }
-            tiddlers[title]["realExamSentences"] = realExamSentences;
-        }
     }
 
     let text = JSON.stringify({ tiddlers });
