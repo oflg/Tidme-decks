@@ -66,7 +66,7 @@ const bookInfoArry = bookListsJson.data.normalBooksInfo;
 
 for (const filepath of booksFilepaths) {
 
-    let version = "1.0.5";
+    let version = "1.1.0";
 
     let bookName = filepath.split("/").slice(-1)[0].replace(".txt", "");
 
@@ -112,8 +112,10 @@ for (const filepath of booksFilepaths) {
         order_learn: `[sort[due]]`,
         order_new: `[sortan[title]]`,
         order_due: `[sort[due]]`,
+        exclude_action: `{{$:/plugins/tidme/fsrs4tw/buttons/action/exclude}}`,
+        unfold_action: `{{$:/plugins/tidme/fsrs4tw/buttons/action/unfold}}`,
         leech_threshold: `8`,
-        leech_action: `<$action-sendmessage $message="tm-add-tag" $param="!"/>`,
+        leech_action: `{{$:/plugins/tidme/fsrs4tw/buttons/action/exclude}}`,
         state_learn: `[state[1]] [state[3]] :filter[{!!due}compare:date:lt<now [UTC]YYYY0MM0DD0hh0mm0ss0XXX>]`,
         state_due: `[state[2]has[due]] -[!days:due[1]]`,
         state_new: `[!has[state]] [state[0]]`,
@@ -385,6 +387,7 @@ for (const filepath of booksFilepaths) {
         tiddlers[title] = {
             title: title,
             word: word,
+            "annotate-text":word,
             word_json: line,
             caption: `{{||${front}}}`,
             text: `{{||${back}}}`
