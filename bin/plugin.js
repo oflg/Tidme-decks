@@ -66,7 +66,7 @@ const bookInfoArry = bookListsJson.data.normalBooksInfo;
 
 for (const filepath of booksFilepaths) {
 
-    let version = "1.1.1";
+    let version = "1.1.2";
 
     let bookName = filepath.split("/").slice(-1)[0].replace(".txt", "");
 
@@ -387,7 +387,9 @@ for (const filepath of booksFilepaths) {
         tiddlers[title] = {
             title: title,
             word: word,
-            "annotate-text": ` ${word} `,
+            "annotate-text": `${word}`,
+            "annotate-prefix": ` `,
+            "annotate-suffix": ` `,
             word_json: line,
             caption: `{{||${front}}}`,
             text: `{{||${back}}}`
